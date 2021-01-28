@@ -4,50 +4,65 @@ import {
   DiagramModel,
   DefaultNodeModel,
   DiagramWidget,
+  NodeWidget
 } from "storm-react-diagrams";
-
 import "./DiagramComponent.scss";
 
-function DiagramComponent({ xProps, yProps  }) {
+function DiagramComponent({ newNodeIndex, xProps, yProps  }) {
+    var engine = new DiagramEngine();
+    var model = new DiagramModel();
 
-var engine = new DiagramEngine();
+    const ElmArchitecture = () => {            
+        //1) setup the diagram engine
+        engine.installDefaultFactories();
 
-const ElmArchitecture = () => {
-  //1) setup the diagram engine
-  engine.installDefaultFactories();
+        //2) setup the diagram model
 
-  //2) setup the diagram model
-  var model = new DiagramModel();
+        //3-A) create a default node
+        var node1 = new DefaultNodeModel("Model", "rgb(0,192,255)");
+        let port1 = node1.addOutPort(" ");
+        node1.setPosition(100, 100);
 
-  //3-A) create a default node
-  var node1 = new DefaultNodeModel("Model", "rgb(0,192,255)");
-  let port1 = node1.addOutPort(" ");
-  node1.setPosition(100, 100);
+        //3-B) create another default node
+        var node2 = new DefaultNodeModel("view", "rgb(192,255,0)");
+        let port2 = node2.addInPort("Model");
+        let port3 = node2.addOutPort("Html");
+        node2.setPosition(xProps, yProps);
 
-  //3-B) create another default node
-  var node2 = new DefaultNodeModel("view", "rgb(192,255,0)");
-  var node3 = new DefaultNodeModel("herp", "rgb(192,1,0)");
-  let port2 = node2.addInPort("Model");
-  let port3 = node2.addOutPort("Html");
-  let port = node3.addOutPort("Ex")
-  node2.setPosition(xProps, yProps);
-  node3.setPosition(200, 200)
+        const addNode = () => {
+            const newNode = new DefaultNodeModel(`New Node${newNodeIndex}`, "rgb(192,131,0)")
+            // let newPort1 = newNode.addInPort('Ent');
+            // let newPort2 = newNode.addOutPort("Exit")
+            newNode.setPosition(xProps + 230, yProps + 20)
+            // let link3 = port3.link(newPort1)
 
-  // link the ports
-  let link1 = port1.link(port2);
-  //link1.addLabel("Hello World!");
+            model.addNode(newNode);
 
-  let link2 = port3.link(port);
+            engine.repaintCanvas();
+        }
 
-  //4) add the models to the root graph
-  model.addAll(node1, node2, node3, link1, link2);
+        React.useEffect(() => {
+            addNode();
+        }, [newNodeIndex]);
 
-  //5) load model into engine
-  engine.setDiagramModel(model);
+        React.useEffect(() => {
+            model.addAll(node1, node2, link1);
+        }, []);
 
-  //6) render the diagram!
-  return <DiagramWidget className="srd-demo-canvas" diagramEngine={engine} />;
-};
+        // link the ports
+        let link1 = port1.link(port2);
+        //link1.addLabel("Hello World!");
+
+        // let link2 = port3.link(port);
+
+        //4) add the models to the root graph
+
+        //5) load model into engine
+        engine.setDiagramModel(model);
+
+        //6) render the diagram!
+        return <DiagramWidget className="srd-demo-canvas" diagramEngine={engine} />;
+    };
 
   return (
     <>
