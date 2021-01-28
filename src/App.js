@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import './App.scss';
+import DiagramComponent from './components/DiagramComponent';
 
 function App() {
+  const [coordXProp, setCoordXProp] = React.useState(400);
+  const [coordYProp, setCoordYProp] = React.useState(100);
+  
+  const changeNode2X = () => {
+    setCoordXProp(Math.floor(Math.random() * 500 + 1))
+  }
+
+  const changeNode2Y = () => {
+    setCoordYProp(Math.floor(Math.random() * 100 + 1))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <DiagramComponent xProps={coordXProp} yProps={coordYProp} />
+      <br />
+      X: {coordXProp} – Y: {coordYProp}
+
+      <div className="App-lower">
+        <div className="App-btn-container">
+          <button onClick={changeNode2X} >Change Node 2 X Coords</button>
+          <button onClick={changeNode2Y} >Change Node 2 Y Coords</button>
+        </div>
+      </div>
     </div>
   );
 }
